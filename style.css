@@ -1,7 +1,7 @@
 /* =====================================================
-   OPTISYNK SMART GLASS DASHBOARD
-   PREMIUM DARK GLASS UI
-   ===================================================== */
+   OPTISYNK SMART GLASS
+   COMPLETE DASHBOARD CSS
+===================================================== */
 
 * {
     margin: 0;
@@ -9,7 +9,14 @@
     box-sizing: border-box;
 }
 
+
+html {
+    scroll-behavior: smooth;
+}
+
+
 body {
+
     min-height: 100vh;
 
     font-family:
@@ -20,10 +27,10 @@ body {
 
     background:
         radial-gradient(
-            circle at top right,
-            #18243b 0%,
-            #090d16 40%,
-            #05070c 100%
+            circle at 85% 0%,
+            #1b2944 0%,
+            #0b111e 32%,
+            #05070c 75%
         );
 
     color: #f4f7fb;
@@ -33,201 +40,236 @@ body {
 
 
 /* =====================================================
-   HEADER
-   ===================================================== */
+   TOPBAR
+===================================================== */
 
 .topbar {
+
+    width: 100%;
+
     height: 82px;
 
     padding: 0 5%;
 
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        rgba(5, 7, 12, 0.88);
 
-    background: rgba(5, 7, 12, 0.78);
+    border-bottom:
+        1px solid rgba(255,255,255,0.08);
 
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(20px);
 
     position: sticky;
+
     top: 0;
 
-    z-index: 100;
+    z-index: 1000;
 }
 
 
 /* =====================================================
    BRAND
-   ===================================================== */
+===================================================== */
 
 .brand {
+
     display: flex;
+
     align-items: center;
 
     gap: 13px;
 }
 
+
 .brand-icon {
-    width: 42px;
-    height: 42px;
+
+    width: 44px;
+    height: 44px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
 
-    border-radius: 11px;
+    background:
+        rgba(255,255,255,0.06);
+
+    border:
+        1px solid rgba(255,255,255,0.18);
 
     font-size: 12px;
+
     font-weight: 800;
 
     letter-spacing: 1px;
-
-    background: rgba(255, 255, 255, 0.06);
 }
+
 
 .brand h1 {
+
     font-size: 15px;
 
-    letter-spacing: 2px;
-
     font-weight: 800;
+
+    letter-spacing: 2px;
 }
 
+
 .brand span {
+
     display: block;
 
-    margin-top: 3px;
+    margin-top: 4px;
+
+    color: #7d8799;
 
     font-size: 10px;
-
-    color: #8993a7;
 
     letter-spacing: 1px;
 }
 
 
 /* =====================================================
-   TOP RIGHT DEVICE CONNECTION
-   ===================================================== */
+   CONNECTION TOP RIGHT
+===================================================== */
 
 .connection {
+
     display: flex;
+
     align-items: center;
 
-    gap: 10px;
+    gap: 11px;
 
     transition: 0.3s ease;
 }
 
 
-/* Normal dot */
+/* STATUS DOT */
 
 .status-dot {
-    width: 9px;
-    height: 9px;
 
-    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
 
     border-radius: 50%;
 
-    background: #666;
+    background: #596170;
 
     box-shadow:
-        0 0 0 transparent;
+        none;
 
     transition:
         background 0.3s ease,
-        box-shadow 0.3s ease;
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
 }
 
 
 /* =====================================================
-   DEVICE ONLINE GLOW
-   ===================================================== */
+   GREEN ONLINE DOT
+===================================================== */
 
 .status-dot.online {
+
     background: #5ee6a1;
 
     box-shadow:
-        0 0 5px rgba(94, 230, 161, 0.9),
-        0 0 12px rgba(94, 230, 161, 0.75),
-        0 0 22px rgba(94, 230, 161, 0.45);
 
-    animation: onlinePulse 2s ease-in-out infinite;
+        0 0 5px #5ee6a1,
+
+        0 0 12px rgba(94,230,161,0.9),
+
+        0 0 24px rgba(94,230,161,0.55),
+
+        0 0 40px rgba(94,230,161,0.25);
+
+    animation:
+        onlineGlow 2s ease-in-out infinite;
 }
 
 
+@keyframes onlineGlow {
+
+    0%,
+    100% {
+
+        transform: scale(1);
+
+        opacity: 1;
+
+    }
+
+    50% {
+
+        transform: scale(1.15);
+
+        opacity: 0.75;
+
+    }
+}
+
+
+/* CONNECTION TEXT */
+
 .connection strong {
+
     display: block;
 
     font-size: 10px;
 
     letter-spacing: 1px;
 
-    transition:
-        color 0.3s ease,
-        text-shadow 0.3s ease;
+    color: #e4e8ee;
+
+    transition: 0.3s ease;
 }
 
 
 .connection.online strong {
-    color: #65e6a4;
+
+    color: #5ee6a1;
 
     text-shadow:
-        0 0 8px rgba(101, 230, 164, 0.45);
+        0 0 8px rgba(94,230,161,0.5);
 }
 
 
 .connection small {
+
     display: block;
 
-    margin-top: 3px;
+    margin-top: 4px;
 
-    color: #788398;
+    color: #707b8e;
 
     font-size: 10px;
 }
 
 
-@keyframes onlinePulse {
-
-    0%,
-    100% {
-        opacity: 1;
-
-        box-shadow:
-            0 0 5px rgba(94, 230, 161, 0.9),
-            0 0 12px rgba(94, 230, 161, 0.75),
-            0 0 22px rgba(94, 230, 161, 0.45);
-    }
-
-    50% {
-        opacity: 0.8;
-
-        box-shadow:
-            0 0 7px rgba(94, 230, 161, 1),
-            0 0 17px rgba(94, 230, 161, 0.85),
-            0 0 30px rgba(94, 230, 161, 0.55);
-    }
-}
-
-
 /* =====================================================
    DASHBOARD
-   ===================================================== */
+===================================================== */
 
 .dashboard {
-    width: min(1200px, 90%);
 
-    margin: 38px auto 45px;
+    width: min(1180px, 90%);
+
+    margin: 35px auto 50px;
 
     display: grid;
 
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns:
+        minmax(0, 1.45fr)
+        minmax(320px, 1fr);
 
     gap: 22px;
 }
@@ -235,7 +277,7 @@ body {
 
 /* =====================================================
    ALL PANELS
-   ===================================================== */
+===================================================== */
 
 .connection-panel,
 .editor-panel,
@@ -244,247 +286,152 @@ body {
 .device-panel {
 
     background:
-        rgba(12, 17, 27, 0.76);
+        rgba(11,16,26,0.82);
 
     border:
-        1px solid rgba(255, 255, 255, 0.075);
+        1px solid rgba(255,255,255,0.075);
 
     border-radius: 20px;
 
     padding: 26px;
 
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(18px);
 
     box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.25);
+        0 18px 55px rgba(0,0,0,0.25);
 }
 
 
 /* =====================================================
    CONNECTION PANEL
-   FULL WIDTH
-   ===================================================== */
+   DEFINITELY FULL WIDTH
+===================================================== */
 
 .connection-panel {
+
     grid-column: 1 / -1;
+
+    width: 100%;
 }
 
 
 /* =====================================================
    SECTION HEADING
-   ===================================================== */
+===================================================== */
 
 .section-heading {
+
+    width: 100%;
+
     display: flex;
 
     justify-content: space-between;
 
     align-items: center;
 
-    margin-bottom: 22px;
+    margin-bottom: 21px;
 }
 
 
 .eyebrow {
+
+    display: block;
+
     font-size: 9px;
+
+    font-weight: 700;
 
     letter-spacing: 2px;
 
-    color: #748096;
-
-    font-weight: 700;
+    color: #728097;
 }
 
 
 .section-heading h2 {
+
     margin-top: 5px;
 
     font-size: 22px;
+
+    line-height: 1.2;
 
     font-weight: 650;
 }
 
 
 /* =====================================================
-   LIVE BADGE
-   ===================================================== */
-
-.live-badge {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    font-size: 9px;
-
-    letter-spacing: 1px;
-
-    padding: 7px 11px;
-
-    border-radius: 20px;
-
-    color: #7e8797;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.1);
-
-    background:
-        rgba(255, 255, 255, 0.025);
-
-    transition:
-        color 0.3s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease,
-        background 0.3s ease;
-}
-
-
-/* LIVE dot */
-
-.live-dot {
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background: #687181;
-
-    box-shadow:
-        0 0 0 transparent;
-
-    transition:
-        background 0.3s ease,
-        box-shadow 0.3s ease;
-}
-
-
-/* =====================================================
-   LIVE ACTIVE / CONNECTED
-   ===================================================== */
-
-.live-badge.active {
-    color: #65e6a4;
-
-    border-color:
-        rgba(101, 230, 164, 0.35);
-
-    background:
-        rgba(101, 230, 164, 0.055);
-
-    box-shadow:
-        0 0 10px rgba(101, 230, 164, 0.12),
-        inset 0 0 12px rgba(101, 230, 164, 0.035);
-}
-
-
-.live-badge.active .live-dot {
-    background: #65e6a4;
-
-    box-shadow:
-        0 0 5px rgba(101, 230, 164, 1),
-        0 0 12px rgba(101, 230, 164, 0.8),
-        0 0 20px rgba(101, 230, 164, 0.45);
-
-    animation: livePulse 1.8s ease-in-out infinite;
-}
-
-
-@keyframes livePulse {
-
-    0%,
-    100% {
-        opacity: 1;
-
-        transform: scale(1);
-
-        box-shadow:
-            0 0 5px rgba(101, 230, 164, 1),
-            0 0 12px rgba(101, 230, 164, 0.8),
-            0 0 20px rgba(101, 230, 164, 0.45);
-    }
-
-    50% {
-        opacity: 0.75;
-
-        transform: scale(1.15);
-
-        box-shadow:
-            0 0 7px rgba(101, 230, 164, 1),
-            0 0 17px rgba(101, 230, 164, 0.9),
-            0 0 28px rgba(101, 230, 164, 0.55);
-    }
-}
-
-
-/* =====================================================
    CONNECTION CONTROLS
-   ===================================================== */
+===================================================== */
 
 .connection-controls {
-    display: flex;
 
-    align-items: flex-end;
+    width: 100%;
 
-    gap: 10px;
-}
+    display: grid;
 
+    grid-template-columns:
+        minmax(300px, 1fr)
+        auto
+        auto;
 
-.ip-input-wrapper {
-    flex: 1;
+    align-items: end;
+
+    gap: 12px;
 }
 
 
 .ip-input-wrapper label {
+
     display: block;
 
     margin-bottom: 7px;
 
-    font-size: 12px;
+    font-size: 11px;
+
+    font-weight: 650;
 
     color: #dbe1ea;
-
-    font-weight: 600;
 }
 
 
 .ip-input-wrapper input {
+
     width: 100%;
 
-    height: 43px;
+    height: 44px;
 
-    padding: 0 13px;
+    padding: 0 14px;
 
-    border-radius: 9px;
+    border-radius: 10px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.08);
+        1px solid rgba(255,255,255,0.09);
 
     outline: none;
 
     background:
-        rgba(0, 0, 0, 0.3);
+        rgba(0,0,0,0.3);
 
     color: white;
 
     font-family: inherit;
 
     font-size: 12px;
-
-    transition: 0.25s;
 }
 
 
 .ip-input-wrapper input:focus {
-    border-color:
-        rgba(255, 255, 255, 0.25);
 
-    background:
-        rgba(0, 0, 0, 0.4);
+    border-color:
+        rgba(255,255,255,0.25);
+
+    box-shadow:
+        0 0 0 3px rgba(255,255,255,0.025);
 }
 
 
 .ip-input-wrapper small {
+
     display: block;
 
     margin-top: 6px;
@@ -496,76 +443,11 @@ body {
 
 
 /* =====================================================
-   CONNECTION BADGE
-   ===================================================== */
-
-.connection-badge {
-    padding: 7px 12px;
-
-    border-radius: 20px;
-
-    font-size: 9px;
-
-    letter-spacing: 1px;
-
-    color: #8c95a5;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.08);
-
-    background:
-        rgba(255, 255, 255, 0.025);
-
-    transition: 0.3s ease;
-}
-
-
-.connection-badge.connected {
-    color: #65e6a4;
-
-    border-color:
-        rgba(101, 230, 164, 0.3);
-
-    background:
-        rgba(101, 230, 164, 0.05);
-
-    box-shadow:
-        0 0 12px rgba(101, 230, 164, 0.12);
-}
-
-
-/* =====================================================
-   WEBSOCKET INFO
-   ===================================================== */
-
-.websocket-info {
-    margin-top: 18px;
-
-    padding-top: 15px;
-
-    border-top:
-        1px solid rgba(255, 255, 255, 0.05);
-
-    font-size: 10px;
-
-    color: #677286;
-}
-
-
-.websocket-info strong {
-    color: #aeb7c6;
-
-    margin-left: 5px;
-
-    font-weight: 500;
-}
-
-
-/* =====================================================
    BUTTONS
-   ===================================================== */
+===================================================== */
 
 button {
+
     border: none;
 
     font-family: inherit;
@@ -573,22 +455,21 @@ button {
     cursor: pointer;
 
     transition:
-        transform 0.2s,
-        background 0.2s,
-        border 0.2s,
-        box-shadow 0.2s;
+        0.2s ease;
 }
 
 
 button:active {
+
     transform: scale(0.97);
 }
 
 
 .primary-btn {
-    height: 43px;
 
-    padding: 0 22px;
+    height: 44px;
+
+    padding: 0 24px;
 
     border-radius: 10px;
 
@@ -599,70 +480,264 @@ button:active {
     font-weight: 750;
 
     font-size: 12px;
+
+    white-space: nowrap;
 }
 
 
 .primary-btn:hover {
-    background: #ffffff;
+
+    background: white;
 
     transform: translateY(-1px);
 }
 
 
 .secondary-btn {
-    height: 43px;
 
-    padding: 0 22px;
+    height: 44px;
+
+    padding: 0 23px;
 
     border-radius: 10px;
 
-    color: #aeb7c8;
-
     background:
-        rgba(255, 255, 255, 0.055);
+        rgba(255,255,255,0.05);
 
     border:
-        1px solid rgba(255, 255, 255, 0.08);
+        1px solid rgba(255,255,255,0.08);
+
+    color: #aeb7c8;
+
+    white-space: nowrap;
 }
 
 
 .secondary-btn:hover {
+
     background:
-        rgba(255, 255, 255, 0.09);
+        rgba(255,255,255,0.09);
+}
+
+
+.secondary-btn:disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   WEBSOCKET
+===================================================== */
+
+.websocket-info {
+
+    margin-top: 18px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid rgba(255,255,255,0.05);
+
+    font-size: 10px;
+
+    color: #657084;
+}
+
+
+.websocket-info strong {
+
+    margin-left: 5px;
+
+    color: #aeb7c6;
+
+    font-weight: 500;
+}
+
+
+/* =====================================================
+   CONNECTION BADGE
+===================================================== */
+
+.connection-badge {
+
+    padding: 7px 13px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    color: #8993a4;
+
+    background:
+        rgba(255,255,255,0.025);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    transition: 0.3s ease;
+}
+
+
+.connection-badge.connected {
+
+    color: #5ee6a1;
+
+    border-color:
+        rgba(94,230,161,0.35);
+
+    background:
+        rgba(94,230,161,0.05);
+
+    box-shadow:
+        0 0 15px rgba(94,230,161,0.12);
+}
+
+
+/* =====================================================
+   LIVE BADGE
+===================================================== */
+
+.live-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    color: #808a9b;
+
+    background:
+        rgba(255,255,255,0.025);
+
+    border:
+        1px solid rgba(255,255,255,0.09);
+
+    transition:
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.live-dot {
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #687181;
+
+    transition: 0.3s ease;
+}
+
+
+/* GREEN LIVE */
+
+.live-badge.active {
+
+    color: #5ee6a1;
+
+    border-color:
+        rgba(94,230,161,0.35);
+
+    background:
+        rgba(94,230,161,0.045);
+
+    box-shadow:
+        0 0 16px rgba(94,230,161,0.12);
+}
+
+
+.live-badge.active .live-dot {
+
+    background: #5ee6a1;
+
+    box-shadow:
+
+        0 0 5px #5ee6a1,
+
+        0 0 12px rgba(94,230,161,0.9),
+
+        0 0 22px rgba(94,230,161,0.5);
+
+    animation:
+        livePulse 1.8s ease-in-out infinite;
+}
+
+
+@keyframes livePulse {
+
+    0%,
+    100% {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+    50% {
+
+        opacity: 0.65;
+
+        transform: scale(1.2);
+
+    }
 }
 
 
 /* =====================================================
    TEXT EDITOR
-   ===================================================== */
+===================================================== */
 
 .editor-wrapper {
+
     position: relative;
+
+    width: 100%;
 }
 
 
 textarea {
+
+    display: block;
+
     width: 100%;
 
     height: 230px;
 
-    resize: vertical;
+    padding: 20px;
 
-    padding: 22px;
+    resize: vertical;
 
     border-radius: 14px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.08);
+        1px solid rgba(255,255,255,0.08);
 
     background:
-        rgba(0, 0, 0, 0.27);
+        rgba(0,0,0,0.28);
 
     color: #f7f9fc;
 
     font-family: inherit;
 
-    font-size: 17px;
+    font-size: 16px;
 
     line-height: 1.6;
 
@@ -673,25 +748,28 @@ textarea {
 
 
 textarea:focus {
+
     border-color:
-        rgba(255, 255, 255, 0.22);
+        rgba(255,255,255,0.22);
 
     background:
-        rgba(0, 0, 0, 0.4);
+        rgba(0,0,0,0.38);
 }
 
 
 textarea::placeholder {
+
     color: #566074;
 }
 
 
 .character-count {
+
     position: absolute;
 
-    right: 16px;
+    right: 15px;
 
-    bottom: 13px;
+    bottom: 12px;
 
     font-size: 10px;
 
@@ -700,10 +778,11 @@ textarea::placeholder {
 
 
 /* =====================================================
-   MESSAGE BUTTONS
-   ===================================================== */
+   SEND BUTTON
+===================================================== */
 
 .button-row {
+
     display: flex;
 
     gap: 10px;
@@ -712,32 +791,42 @@ textarea::placeholder {
 }
 
 
-.button-row .primary-btn {
+.send-button {
+
     flex: 1;
+}
+
+
+.clear-button {
+
+    min-width: 85px;
 }
 
 
 /* =====================================================
    QUICK MESSAGES
-   ===================================================== */
+===================================================== */
 
 .quick-section {
-    margin-top: 25px;
+
+    margin-top: 24px;
 }
 
 
 .sub-heading {
+
+    margin-bottom: 12px;
+
     font-size: 9px;
 
     letter-spacing: 1.5px;
 
     color: #687489;
-
-    margin-bottom: 12px;
 }
 
 
 .quick-buttons {
+
     display: flex;
 
     flex-wrap: wrap;
@@ -747,35 +836,38 @@ textarea::placeholder {
 
 
 .quick-btn {
+
     padding: 9px 13px;
 
     border-radius: 8px;
 
     background:
-        rgba(255, 255, 255, 0.04);
-
-    color: #929daf;
+        rgba(255,255,255,0.04);
 
     border:
-        1px solid rgba(255, 255, 255, 0.06);
+        1px solid rgba(255,255,255,0.06);
+
+    color: #929daf;
 
     font-size: 10px;
 }
 
 
 .quick-btn:hover {
+
     color: white;
 
     background:
-        rgba(255, 255, 255, 0.08);
+        rgba(255,255,255,0.08);
 }
 
 
 /* =====================================================
-   CONTROL CARDS
-   ===================================================== */
+   CONTROL CARD
+===================================================== */
 
 .control-card {
+
     padding: 17px;
 
     margin-bottom: 12px;
@@ -783,25 +875,27 @@ textarea::placeholder {
     border-radius: 13px;
 
     background:
-        rgba(0, 0, 0, 0.17);
+        rgba(0,0,0,0.17);
 
     border:
-        1px solid rgba(255, 255, 255, 0.05);
+        1px solid rgba(255,255,255,0.05);
 }
 
 
 .control-title {
+
     display: flex;
 
     justify-content: space-between;
 
     align-items: center;
 
-    margin-bottom: 16px;
+    margin-bottom: 15px;
 }
 
 
 .control-name {
+
     display: block;
 
     font-size: 12px;
@@ -811,6 +905,7 @@ textarea::placeholder {
 
 
 .control-title small {
+
     display: block;
 
     margin-top: 4px;
@@ -822,6 +917,7 @@ textarea::placeholder {
 
 
 .value {
+
     font-size: 11px;
 
     color: #aab3c2;
@@ -830,9 +926,10 @@ textarea::placeholder {
 
 /* =====================================================
    RANGE
-   ===================================================== */
+===================================================== */
 
 input[type="range"] {
+
     width: 100%;
 
     height: 4px;
@@ -848,6 +945,7 @@ input[type="range"] {
 
 
 input[type="range"]::-webkit-slider-thumb {
+
     appearance: none;
 
     width: 15px;
@@ -860,28 +958,30 @@ input[type="range"]::-webkit-slider-thumb {
     cursor: pointer;
 
     box-shadow:
-        0 0 0 4px rgba(255, 255, 255, 0.08);
+        0 0 0 4px rgba(255,255,255,0.08);
 }
 
 
 .range-labels {
+
     display: flex;
 
     justify-content: space-between;
 
     margin-top: 8px;
 
-    font-size: 8px;
-
     color: #5e6879;
+
+    font-size: 8px;
 }
 
 
 /* =====================================================
-   TEXT SIZE
-   ===================================================== */
+   SIZE BUTTONS
+===================================================== */
 
 .size-buttons {
+
     display: flex;
 
     gap: 8px;
@@ -889,44 +989,48 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .size-btn {
+
     width: 45px;
     height: 37px;
 
     border-radius: 8px;
 
     background:
-        rgba(255, 255, 255, 0.04);
+        rgba(255,255,255,0.04);
 
     color: #8b96a9;
 
     border:
-        1px solid rgba(255, 255, 255, 0.07);
+        1px solid rgba(255,255,255,0.07);
 
     font-size: 13px;
 }
 
 
 .size-btn.large {
+
     font-size: 18px;
 }
 
 
 .size-btn.active {
+
     background:
-        rgba(255, 255, 255, 0.13);
+        rgba(255,255,255,0.13);
 
     color: white;
 
     border-color:
-        rgba(255, 255, 255, 0.2);
+        rgba(255,255,255,0.2);
 }
 
 
 /* =====================================================
-   DISPLAY MODE
-   ===================================================== */
+   MODE BUTTONS
+===================================================== */
 
 .mode-buttons {
+
     display: grid;
 
     grid-template-columns: 1fr 1fr;
@@ -936,42 +1040,45 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .mode-btn {
+
     height: 38px;
 
     border-radius: 8px;
 
     background:
-        rgba(255, 255, 255, 0.04);
+        rgba(255,255,255,0.04);
 
     color: #818b9d;
 
     border:
-        1px solid rgba(255, 255, 255, 0.06);
+        1px solid rgba(255,255,255,0.06);
 
     font-size: 10px;
 }
 
 
 .mode-btn.active {
+
     background:
-        rgba(255, 255, 255, 0.12);
+        rgba(255,255,255,0.12);
 
     color: white;
 
     border-color:
-        rgba(255, 255, 255, 0.16);
+        rgba(255,255,255,0.16);
 }
 
 
 /* =====================================================
    PLAYBACK
-   ===================================================== */
+===================================================== */
 
 .playback {
+
     display: grid;
 
     grid-template-columns:
-        1fr 1fr 1fr;
+        repeat(3, 1fr);
 
     gap: 8px;
 
@@ -980,6 +1087,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .playback button {
+
     height: 40px;
 
     border-radius: 9px;
@@ -991,6 +1099,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .play-btn {
+
     background: #f0f3f7;
 
     color: #090c12;
@@ -999,40 +1108,44 @@ input[type="range"]::-webkit-slider-thumb {
 
 .pause-btn,
 .reset-btn {
+
     background:
-        rgba(255, 255, 255, 0.05);
+        rgba(255,255,255,0.05);
 
     color: #9aa5b7;
 
     border:
-        1px solid rgba(255, 255, 255, 0.07);
+        1px solid rgba(255,255,255,0.07);
 }
 
 
 /* =====================================================
-   PREVIEW
-   ===================================================== */
+   LIVE PREVIEW
+===================================================== */
 
 .preview-panel {
+
     grid-column: 1 / -1;
 }
 
 
 #previewStatus {
-    font-size: 9px;
 
-    color: #657084;
+    font-size: 9px;
 
     letter-spacing: 1px;
 
-    transition: 0.3s;
+    color: #657084;
 }
 
 
 .glass-preview {
-    height: 230px;
 
     position: relative;
+
+    width: 100%;
+
+    height: 230px;
 
     overflow: hidden;
 
@@ -1047,16 +1160,17 @@ input[type="range"]::-webkit-slider-thumb {
     background:
         linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.035),
-            rgba(0, 0, 0, 0.35)
+            rgba(255,255,255,0.035),
+            rgba(0,0,0,0.35)
         );
 
     border:
-        1px solid rgba(255, 255, 255, 0.08);
+        1px solid rgba(255,255,255,0.08);
 }
 
 
 .glass-grid {
+
     position: absolute;
 
     inset: 0;
@@ -1064,13 +1178,15 @@ input[type="range"]::-webkit-slider-thumb {
     opacity: 0.15;
 
     background-image:
+
         linear-gradient(
-            rgba(255, 255, 255, 0.08) 1px,
+            rgba(255,255,255,0.08) 1px,
             transparent 1px
         ),
+
         linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.08) 1px,
+            rgba(255,255,255,0.08) 1px,
             transparent 1px
         );
 
@@ -1079,11 +1195,12 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .preview-text {
+
     position: relative;
 
     z-index: 2;
 
-    max-width: 80%;
+    width: 80%;
 
     text-align: center;
 
@@ -1095,26 +1212,28 @@ input[type="range"]::-webkit-slider-thumb {
 
     font-weight: 700;
 
-    color: rgba(255, 255, 255, 0.85);
+    color:
+        rgba(255,255,255,0.85);
 
     text-shadow:
-        0 0 15px rgba(255, 255, 255, 0.25);
+        0 0 15px rgba(255,255,255,0.25);
 
     word-break: break-word;
 }
 
 
 .scan-line {
+
     position: absolute;
 
     width: 100%;
 
     height: 1px;
 
-    background:
-        rgba(255, 255, 255, 0.15);
-
     top: 50%;
+
+    background:
+        rgba(255,255,255,0.15);
 
     animation:
         scan 4s linear infinite;
@@ -1124,31 +1243,40 @@ input[type="range"]::-webkit-slider-thumb {
 @keyframes scan {
 
     0% {
-        transform: translateY(-100px);
+
+        transform:
+            translateY(-100px);
+
         opacity: 0;
     }
 
     30% {
+
         opacity: 0.5;
     }
 
     70% {
+
         opacity: 0.5;
     }
 
     100% {
-        transform: translateY(100px);
+
+        transform:
+            translateY(100px);
+
         opacity: 0;
     }
 }
 
 
 .glass-label {
+
     position: absolute;
 
-    bottom: 13px;
-
     left: 15px;
+
+    bottom: 13px;
 
     font-size: 8px;
 
@@ -1159,10 +1287,11 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 /* =====================================================
-   DEVICE PANEL
-   ===================================================== */
+   DEVICE INFORMATION
+===================================================== */
 
 .device-panel {
+
     grid-column: 1 / -1;
 
     display: grid;
@@ -1175,6 +1304,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .device-card {
+
     display: flex;
 
     align-items: center;
@@ -1186,33 +1316,34 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: 11px;
 
     background:
-        rgba(255, 255, 255, 0.025);
+        rgba(255,255,255,0.025);
 
     border:
-        1px solid rgba(255, 255, 255, 0.05);
+        1px solid rgba(255,255,255,0.05);
 }
 
 
 .device-icon {
+
     width: 34px;
     height: 34px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     border-radius: 8px;
 
     background:
-        rgba(255, 255, 255, 0.06);
+        rgba(255,255,255,0.06);
 
     color: #a7b0c0;
 }
 
 
 .device-title {
+
     display: block;
 
     font-size: 11px;
@@ -1222,6 +1353,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .device-card small {
+
     display: block;
 
     margin-top: 3px;
@@ -1234,14 +1366,14 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* =====================================================
    FOOTER
-   ===================================================== */
+===================================================== */
 
 footer {
-    width: 90%;
 
-    max-width: 1200px;
+    width: min(1180px, 90%);
 
-    margin: 0 auto 25px;
+    margin:
+        0 auto 25px;
 
     padding-top: 18px;
 
@@ -1250,7 +1382,7 @@ footer {
     justify-content: space-between;
 
     border-top:
-        1px solid rgba(255, 255, 255, 0.06);
+        1px solid rgba(255,255,255,0.06);
 
     color: #515b6c;
 
@@ -1262,71 +1394,106 @@ footer {
 
 /* =====================================================
    RESPONSIVE
-   ===================================================== */
+===================================================== */
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
 
     .dashboard {
+
         grid-template-columns: 1fr;
     }
+
 
     .connection-panel,
     .editor-panel,
     .control-panel,
     .preview-panel,
     .device-panel {
+
         grid-column: 1 / -1;
     }
 
-    .device-panel {
-        grid-template-columns: 1fr;
-    }
 
     .connection-controls {
-        flex-wrap: wrap;
+
+        grid-template-columns: 1fr 1fr;
     }
 
+
     .ip-input-wrapper {
-        flex-basis: 100%;
+
+        grid-column: 1 / -1;
+    }
+
+
+    .device-panel {
+
+        grid-template-columns:
+            1fr 1fr 1fr;
     }
 }
 
 
-@media (max-width: 550px) {
+@media (max-width: 600px) {
 
     .topbar {
+
         padding: 0 5%;
     }
 
+
     .connection {
+
         display: none;
     }
 
+
     .dashboard {
+
         width: 94%;
 
         margin-top: 25px;
     }
 
-    .connection-panel,
-    .editor-panel,
-    .control-panel,
-    .preview-panel,
-    .device-panel {
-        padding: 18px;
-    }
 
     .connection-controls {
-        flex-direction: column;
 
-        align-items: stretch;
+        grid-template-columns: 1fr;
     }
 
+
+    .ip-input-wrapper {
+
+        grid-column: auto;
+    }
+
+
     .connection-controls button {
+
         width: 100%;
     }
 
+
+    .device-panel {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .button-row {
+
+        flex-direction: column;
+    }
+
+
+    .clear-button {
+
+        width: 100%;
+    }
+
+
     footer {
+
         width: 94%;
 
         flex-direction: column;
