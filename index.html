@@ -5,720 +5,690 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Smart Glass | Control Dashboard</title>
+    <title>OPTISYNK | Smart Glass Dashboard</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
+
 <body>
 
-    <!-- =====================================================
-                         HEADER
-    ====================================================== -->
+<!-- =====================================================
+     TOP HEADER
+===================================================== -->
 
-    <header class="topbar">
+<header class="topbar">
 
-        <div class="brand">
+    <div class="brand">
 
-            <div class="brand-icon">
-                SG
-            </div>
+        <div class="brand-icon">
+            SG
+        </div>
+
+        <div class="brand-text">
+
+            <h1>SMART GLASS</h1>
+
+            <span>
+                Real-Time Display System
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOP RIGHT DEVICE STATUS -->
+
+    <div class="connection" id="connectionContainer">
+
+        <span
+            class="status-dot"
+            id="statusDot">
+        </span>
+
+        <div>
+
+            <strong id="connectionText">
+                DEVICE OFFLINE
+            </strong>
+
+            <small id="connectionSubtext">
+                Waiting for ESP32-C3
+            </small>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN DASHBOARD
+===================================================== -->
+
+<main class="dashboard">
+
+
+    <!-- =================================================
+         CONNECTION PANEL
+    ================================================== -->
+
+    <section class="connection-panel">
+
+        <div class="section-heading">
 
             <div>
-                <h1>SMART GLASS</h1>
-                <span>Real-Time Display System</span>
+
+                <span class="eyebrow">
+                    DEVICE CONNECTION
+                </span>
+
+                <h2>
+                    ESP32-C3
+                </h2>
+
+            </div>
+
+
+            <span
+                class="connection-badge"
+                id="connectionBadge">
+
+                DISCONNECTED
+
+            </span>
+
+        </div>
+
+
+        <div class="connection-controls">
+
+
+            <!-- IP -->
+
+            <div class="ip-input-wrapper">
+
+                <label for="esp32IP">
+                    ESP32 IP Address
+                </label>
+
+                <input
+                    type="text"
+                    id="esp32IP"
+                    value="10.22.95.175"
+                    placeholder="Example: 10.22.95.175"
+                    autocomplete="off"
+                >
+
+                <small>
+                    Enter the IP shown in Arduino Serial Monitor
+                </small>
+
+            </div>
+
+
+            <!-- CONNECT -->
+
+            <button
+                class="primary-btn connect-button"
+                id="connectBtn">
+
+                Connect ESP32
+
+            </button>
+
+
+            <!-- DISCONNECT -->
+
+            <button
+                class="secondary-btn"
+                id="disconnectBtn"
+                disabled>
+
+                Disconnect
+
+            </button>
+
+        </div>
+
+
+        <!-- WEBSOCKET -->
+
+        <div class="websocket-info">
+
+            <span>
+                WebSocket:
+            </span>
+
+            <strong id="websocketAddress">
+                ws://10.22.95.175:81
+            </strong>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         LEFT : TELEPROMPTER
+    ================================================== -->
+
+    <section class="editor-panel">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    MESSAGE CONTROL
+                </span>
+
+                <h2>
+                    Teleprompter
+                </h2>
+
+            </div>
+
+
+            <!-- LIVE -->
+
+            <span
+                class="live-badge"
+                id="liveBadge">
+
+                <span class="live-dot"></span>
+
+                LIVE
+
+            </span>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div class="editor-wrapper">
+
+            <textarea
+                id="messageInput"
+                maxlength="500"
+                placeholder="Type your message here..."
+                spellcheck="false"
+            ></textarea>
+
+
+            <div class="character-count">
+
+                <span id="characterCount">
+                    0
+                </span>
+
+                / 500
+
             </div>
 
         </div>
 
 
-        <!-- DEVICE CONNECTION STATUS -->
+        <!-- SEND -->
 
-        <div class="connection">
+        <div class="button-row">
 
-            <span
-                class="status-dot"
-                id="statusDot">
+            <button
+                class="primary-btn send-button"
+                id="sendBtn">
+
+                <span>
+                    ➤
+                </span>
+
+                Send to Glass
+
+            </button>
+
+
+            <button
+                class="secondary-btn clear-button"
+                id="clearBtn">
+
+                Clear
+
+            </button>
+
+        </div>
+
+
+        <!-- QUICK MESSAGE -->
+
+        <div class="quick-section">
+
+            <div class="sub-heading">
+                QUICK MESSAGE
+            </div>
+
+
+            <div class="quick-buttons">
+
+                <button
+                    class="quick-btn"
+                    data-message="Welcome to our presentation">
+
+                    Welcome
+
+                </button>
+
+
+                <button
+                    class="quick-btn"
+                    data-message="Thank you for listening">
+
+                    Thank You
+
+                </button>
+
+
+                <button
+                    class="quick-btn"
+                    data-message="Please wait...">
+
+                    Please Wait
+
+                </button>
+
+
+                <button
+                    class="quick-btn"
+                    data-message="System Alert">
+
+                    Alert
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         RIGHT : DISPLAY CONTROL
+    ================================================== -->
+
+    <section class="control-panel">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    DISPLAY CONTROL
+                </span>
+
+                <h2>
+                    Settings
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCROLL SPEED -->
+
+        <div class="control-card">
+
+            <div class="control-title">
+
+                <div>
+
+                    <span class="control-name">
+                        Scroll Speed
+                    </span>
+
+                    <small>
+                        Control text movement
+                    </small>
+
+                </div>
+
+
+                <span
+                    class="value"
+                    id="speedValue">
+
+                    50%
+
+                </span>
+
+            </div>
+
+
+            <input
+                type="range"
+                id="speedSlider"
+                min="1"
+                max="100"
+                value="50"
+            >
+
+
+            <div class="range-labels">
+
+                <span>
+                    Slow
+                </span>
+
+                <span>
+                    Fast
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TEXT SIZE -->
+
+        <div class="control-card">
+
+            <div class="control-title">
+
+                <div>
+
+                    <span class="control-name">
+                        Text Size
+                    </span>
+
+                    <small>
+                        Adjust display size
+                    </small>
+
+                </div>
+
+
+                <span
+                    class="value"
+                    id="fontValue">
+
+                    Medium
+
+                </span>
+
+            </div>
+
+
+            <div class="size-buttons">
+
+                <button
+                    class="size-btn"
+                    data-size="small">
+
+                    A
+
+                </button>
+
+
+                <button
+                    class="size-btn active"
+                    data-size="medium">
+
+                    A
+
+                </button>
+
+
+                <button
+                    class="size-btn large"
+                    data-size="large">
+
+                    A
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DISPLAY MODE -->
+
+        <div class="control-card">
+
+            <div class="control-title">
+
+                <div>
+
+                    <span class="control-name">
+                        Display Mode
+                    </span>
+
+                    <small>
+                        Choose display behavior
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="mode-buttons">
+
+                <button
+                    class="mode-btn active"
+                    data-mode="scroll">
+
+                    Scroll
+
+                </button>
+
+
+                <button
+                    class="mode-btn"
+                    data-mode="static">
+
+                    Static
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- PLAYBACK -->
+
+        <div class="playback">
+
+            <button
+                id="startBtn"
+                class="play-btn">
+
+                ▶ Start
+
+            </button>
+
+
+            <button
+                id="pauseBtn"
+                class="pause-btn">
+
+                ⏸ Pause
+
+            </button>
+
+
+            <button
+                id="resetBtn"
+                class="reset-btn">
+
+                ↻ Reset
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         LIVE PREVIEW
+    ================================================== -->
+
+    <section class="preview-panel">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    LIVE PREVIEW
+                </span>
+
+                <h2>
+                    Glass Display
+                </h2>
+
+            </div>
+
+
+            <span id="previewStatus">
+                READY
+            </span>
+
+        </div>
+
+
+        <div class="glass-preview">
+
+            <div class="glass-grid"></div>
+
+
+            <div
+                id="previewText"
+                class="preview-text">
+
+                YOUR MESSAGE
+
+            </div>
+
+
+            <div class="scan-line"></div>
+
+
+            <div class="glass-label">
+                SMART GLASS DISPLAY
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         DEVICE INFORMATION
+    ================================================== -->
+
+    <section class="device-panel">
+
+
+        <div class="device-card">
+
+            <span class="device-icon">
+                ◉
             </span>
 
             <div>
 
-                <strong id="connectionText">
-                    DEVICE OFFLINE
-                </strong>
+                <span class="device-title">
+                    ESP32-C3
+                </span>
 
-                <small id="connectionSubtext">
-                    Waiting for ESP32-C3
+                <small id="deviceStatus">
+                    Not connected
                 </small>
 
             </div>
 
         </div>
 
-    </header>
 
+        <div class="device-card">
 
-    <!-- =====================================================
-                       MAIN DASHBOARD
-    ====================================================== -->
+            <span class="device-icon">
+                ▣
+            </span>
 
-    <main class="dashboard">
+            <div>
 
-
-        <!-- =================================================
-                         CONNECTION PANEL
-        ================================================== -->
-
-        <section class="connection-panel">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="eyebrow">
-                        DEVICE CONNECTION
-                    </span>
-
-                    <h2>
-                        ESP32-C3
-                    </h2>
-
-                </div>
-
-                <span
-                    class="connection-badge"
-                    id="connectionBadge">
-                    DISCONNECTED
+                <span class="device-title">
+                    OLED Display
                 </span>
 
-            </div>
-
-
-            <!-- ESP32 IP ADDRESS -->
-
-            <div class="connection-controls">
-
-                <div class="ip-input-wrapper">
-
-                    <label for="esp32IP">
-                        ESP32 IP Address
-                    </label>
-
-                    <input
-                        type="text"
-                        id="esp32IP"
-                        value="10.22.95.175"
-                        placeholder="Example: 10.22.95.175"
-                        autocomplete="off"
-                    >
-
-                    <small>
-                        Enter the IP shown in Arduino Serial Monitor
-                    </small>
-
-                </div>
-
-
-                <!-- CONNECT BUTTON -->
-
-                <button
-                    class="primary-btn"
-                    id="connectBtn">
-
-                    Connect ESP32
-
-                </button>
-
-
-                <!-- DISCONNECT BUTTON -->
-
-                <button
-                    class="secondary-btn"
-                    id="disconnectBtn"
-                    disabled>
-
-                    Disconnect
-
-                </button>
+                <small>
+                    128 × 64
+                </small>
 
             </div>
 
+        </div>
 
-            <!-- WEBSOCKET INFORMATION -->
 
-            <div class="websocket-info">
+        <div class="device-card">
 
-                <span>
-                    WebSocket:
+            <span class="device-icon">
+                ⌁
+            </span>
+
+            <div>
+
+                <span class="device-title">
+                    Connection
                 </span>
 
-                <strong id="websocketAddress">
-                    ws://10.22.95.175:81
-                </strong>
+                <small id="connectionType">
+                    WebSocket :81
+                </small>
 
             </div>
 
-        </section>
+        </div>
 
+    </section>
 
+</main>
 
-        <!-- =================================================
-                         LEFT SIDE
-        ================================================== -->
 
-        <section class="editor-panel">
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
-            <!-- SECTION HEADER -->
+<footer>
 
-            <div class="section-heading">
+    <span>
+        OPTISYNK • SMART GLASS PROJECT
+    </span>
 
-                <div>
+    <span>
+        ESP32-C3 • OLED • WEBSOCKET
+    </span>
 
-                    <span class="eyebrow">
-                        MESSAGE CONTROL
-                    </span>
+</footer>
 
-                    <h2>
-                        Teleprompter
-                    </h2>
 
-                </div>
 
-                <span class="live-badge" id="liveBadge">
-                    <span class="live-dot"></span>
-                    LIVE
-                </span>
-
-            </div>
-
-
-            <!-- =================================================
-                         MESSAGE BOX
-            ================================================== -->
-
-            <div class="editor-wrapper">
-
-                <textarea
-                    id="messageInput"
-                    maxlength="500"
-                    placeholder="Type your message here..."
-                    spellcheck="false"
-                ></textarea>
-
-
-                <!-- CHARACTER COUNTER -->
-
-                <div class="character-count">
-
-                    <span id="characterCount">
-                        0
-                    </span>
-
-                    / 500
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                         ACTION BUTTONS
-            ================================================== -->
-
-            <div class="button-row">
-
-                <button
-                    class="primary-btn"
-                    id="sendBtn">
-
-                    <span>
-                        ➤
-                    </span>
-
-                    Send to Glass
-
-                </button>
-
-
-                <button
-                    class="secondary-btn"
-                    id="clearBtn">
-
-                    Clear
-
-                </button>
-
-            </div>
-
-
-            <!-- =================================================
-                         QUICK MESSAGES
-            ================================================== -->
-
-            <div class="quick-section">
-
-                <div class="sub-heading">
-
-                    <span>
-                        QUICK MESSAGE
-                    </span>
-
-                </div>
-
-
-                <div class="quick-buttons">
-
-                    <button
-                        class="quick-btn"
-                        data-message="Welcome to our presentation">
-
-                        Welcome
-
-                    </button>
-
-
-                    <button
-                        class="quick-btn"
-                        data-message="Thank you for listening">
-
-                        Thank You
-
-                    </button>
-
-
-                    <button
-                        class="quick-btn"
-                        data-message="Please wait...">
-
-                        Please Wait
-
-                    </button>
-
-
-                    <button
-                        class="quick-btn"
-                        data-message="System Alert">
-
-                        Alert
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-                         RIGHT SIDE
-        ================================================== -->
-
-        <section class="control-panel">
-
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="eyebrow">
-                        DISPLAY CONTROL
-                    </span>
-
-                    <h2>
-                        Settings
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================================
-                         SCROLL SPEED
-            ================================================== -->
-
-            <div class="control-card">
-
-                <div class="control-title">
-
-                    <div>
-
-                        <span class="control-name">
-                            Scroll Speed
-                        </span>
-
-                        <small>
-                            Control text movement
-                        </small>
-
-                    </div>
-
-
-                    <span
-                        class="value"
-                        id="speedValue">
-
-                        50%
-
-                    </span>
-
-                </div>
-
-
-                <input
-                    type="range"
-                    id="speedSlider"
-                    min="1"
-                    max="100"
-                    value="50"
-                >
-
-
-                <div class="range-labels">
-
-                    <span>
-                        Slow
-                    </span>
-
-                    <span>
-                        Fast
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =================================================
-                         FONT SIZE
-            ================================================== -->
-
-            <div class="control-card">
-
-                <div class="control-title">
-
-                    <div>
-
-                        <span class="control-name">
-                            Text Size
-                        </span>
-
-                        <small>
-                            Adjust display size
-                        </small>
-
-                    </div>
-
-
-                    <span
-                        class="value"
-                        id="fontValue">
-
-                        Medium
-
-                    </span>
-
-                </div>
-
-
-                <div class="size-buttons">
-
-                    <button
-                        class="size-btn"
-                        data-size="small">
-
-                        A
-
-                    </button>
-
-
-                    <button
-                        class="size-btn active"
-                        data-size="medium">
-
-                        A
-
-                    </button>
-
-
-                    <button
-                        class="size-btn large"
-                        data-size="large">
-
-                        A
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =================================================
-                         DISPLAY MODE
-            ================================================== -->
-
-            <div class="control-card">
-
-                <div class="control-title">
-
-                    <div>
-
-                        <span class="control-name">
-                            Display Mode
-                        </span>
-
-                        <small>
-                            Choose display behavior
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-                <div class="mode-buttons">
-
-                    <button
-                        class="mode-btn active"
-                        data-mode="scroll">
-
-                        Scroll
-
-                    </button>
-
-
-                    <button
-                        class="mode-btn"
-                        data-mode="static">
-
-                        Static
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =================================================
-                         TELEPROMPTER CONTROLS
-            ================================================== -->
-
-            <div class="playback">
-
-                <button
-                    id="startBtn"
-                    class="play-btn">
-
-                    ▶ Start
-
-                </button>
-
-
-                <button
-                    id="pauseBtn"
-                    class="pause-btn">
-
-                    ⏸ Pause
-
-                </button>
-
-
-                <button
-                    id="resetBtn"
-                    class="reset-btn">
-
-                    ↻ Reset
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-                         LIVE PREVIEW
-        ================================================== -->
-
-        <section class="preview-panel">
-
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="eyebrow">
-                        LIVE PREVIEW
-                    </span>
-
-                    <h2>
-                        Glass Display
-                    </h2>
-
-                </div>
-
-
-                <span id="previewStatus">
-                    READY
-                </span>
-
-            </div>
-
-
-            <!-- GLASS PREVIEW -->
-
-            <div class="glass-preview">
-
-                <div class="glass-grid"></div>
-
-
-                <div
-                    id="previewText"
-                    class="preview-text">
-
-                    YOUR MESSAGE
-
-                </div>
-
-
-                <div class="scan-line"></div>
-
-
-                <div class="glass-label">
-
-                    SMART GLASS DISPLAY
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-                         DEVICE INFORMATION
-        ================================================== -->
-
-        <section class="device-panel">
-
-
-            <!-- ESP32 -->
-
-            <div class="device-card">
-
-                <span class="device-icon">
-                    ◉
-                </span>
-
-
-                <div>
-
-                    <span class="device-title">
-                        ESP32-C3
-                    </span>
-
-
-                    <small id="deviceStatus">
-                        Not connected
-                    </small>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- OLED -->
-
-            <div class="device-card">
-
-                <span class="device-icon">
-                    ▣
-                </span>
-
-
-                <div>
-
-                    <span class="device-title">
-                        OLED Display
-                    </span>
-
-
-                    <small>
-                        128 × 64
-                    </small>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- CONNECTION -->
-
-            <div class="device-card">
-
-                <span class="device-icon">
-                    ⌁
-                </span>
-
-
-                <div>
-
-                    <span class="device-title">
-                        Connection
-                    </span>
-
-
-                    <small id="connectionType">
-                        WebSocket :81
-                    </small>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-    </main>
-
-
-
-    <!-- =====================================================
-                           FOOTER
-    ====================================================== -->
-
-    <footer>
-
-        <span>
-            SMART GLASS PROJECT
-        </span>
-
-
-        <span>
-            ESP32-C3 • OLED • REAL-TIME COMMUNICATION
-        </span>
-
-    </footer>
-
-
-
-    <!-- =====================================================
-                         JAVASCRIPT
-    ====================================================== -->
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 
