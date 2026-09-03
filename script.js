@@ -491,44 +491,54 @@ if (disconnectBtn) {
 
 
 /* =====================================================
-   MESSAGE INPUT
+   LIVE MESSAGE INPUT
    ===================================================== */
 
-messageInput.addEventListener(
-    "input",
-    () => {
+let typingTimer = null;
 
-        const text =
-            messageInput.value;
+messageInput.addEventListener("input", () => {
 
+    const text = messageInput.value;
 
-        // Update character count
+    // Update character count
+    characterCount.textContent = text.length;
 
-        characterCount.textContent =
-            text.length;
-
-
-        // Update browser preview
-
-        if (
-            text.trim() !== ""
-        ) {
-
-            previewText.textContent =
-                text;
-
-        }
-
-        else {
-
-            previewText.textContent =
-                "YOUR MESSAGE";
-
-        }
-
+    // Update browser preview
+    if (text.trim() !== "") {
+        previewText.textContent = text;
+    } else {
+        previewText.textContent = "YOUR MESSAGE";
     }
-);
 
+    // -----------------------------------------------
+    // LIVE SEND TO ESP32
+    // -----------------------------------------------
+
+    clearTimeout(typingTimer);
+
+    typingTimer = setTimeout(() => {
+
+        // Don't send if ESP32 is not connected
+        if (
+            !socket ||
+            socket.readyState !== WebSocket.OPEN
+        ) {
+            console.log("ESP32 not connected - message not sent");
+            return;
+        }
+
+        // Send empty text too, so OLED can be cleared
+        const command = "TEXT:" + text;
+
+        socket.send(command);
+
+        console.log("LIVE SENT:", command);
+
+        previewStatus.textContent = "LIVE TO GLASS";
+
+    }, 80); // 80ms delay for smooth real-time typing
+
+});
 
 
 /* =====================================================
