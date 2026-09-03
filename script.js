@@ -1,6 +1,6 @@
 /* =====================================================
-   SMART GLASS DASHBOARD
-   STEP 2 — REAL ESP32 WEBSOCKET CONNECTION
+   OPTISYNK SMART GLASS DASHBOARD
+   ESP32-C3 REAL-TIME OLED MIRROR
    =====================================================
 
    DATA FLOW:
@@ -15,12 +15,27 @@
       ↓
    OLED 128x64
 
+   OLED → WEBSITE MIRROR
 
-   ESP32 WebSocket:
-   ws://ESP32_IP:81
+   ESP32 sends:
 
-   Example:
-   ws://10.22.95.175:81
+   ESP32_CONNECTED
+
+   LINES_BEGIN:3:2
+   LINE:0:HELLO WORLD
+   LINE:1:SMART GLASS
+   LINE:2:READY
+   LINES_END
+
+   SYNC:24:2:SCROLL:1
+
+   Where:
+
+   offset  = OLED scroll position
+   font    = OLED font size
+   mode    = STATIC / SCROLL
+   playing = 1 / 0
+
    ===================================================== */
 
 
@@ -80,7 +95,7 @@ const deviceStatus =
 
 
 // =====================================================
-// NEW ESP32 CONNECTION ELEMENTS
+// ESP32 CONNECTION ELEMENTS
 // =====================================================
 
 const esp32IP =
@@ -104,12 +119,42 @@ const websocketAddress =
    WEBSOCKET VARIABLES
    ===================================================== */
 
-// This variable will contain our WebSocket connection
 let socket = null;
 
-
-// Current connection state
 let isConnected = false;
+
+
+
+/* =====================================================
+   OLED MIRROR VARIABLES
+   ===================================================== */
+
+// Exact wrapped lines received from ESP32
+let mirrorLines = [];
+
+
+// Number of lines expected from ESP32
+let mirrorExpectedLines = 0;
+
+
+// Font currently used by OLED
+let mirrorFont = 1;
+
+
+// Current OLED scroll offset
+let mirrorOffset = 0;
+
+
+// Current OLED mode
+let mirrorMode = "STATIC";
+
+
+// Current OLED playback state
+let mirrorPlaying = false;
+
+
+// Are we currently receiving line data?
+let receivingLines = false;
 
 
 
@@ -117,7 +162,6 @@ let isConnected = false;
    ESP32 IP ADDRESS
    ===================================================== */
 
-// Get IP address from input box
 function getESP32IP() {
 
     return esp32IP.value.trim();
@@ -130,13 +174,11 @@ function getESP32IP() {
    UPDATE WEBSOCKET ADDRESS
    ===================================================== */
 
-// Whenever IP changes, update the displayed
-// WebSocket address.
-
 function updateWebSocketAddress() {
 
     const ip =
         getESP32IP();
+
 
     if (ip === "") {
 
@@ -185,7 +227,6 @@ function connectESP32() {
 
     // If an old connection exists,
     // close it first.
-
     if (socket) {
 
         socket.close();
@@ -195,7 +236,6 @@ function connectESP32() {
 
 
     // Create WebSocket URL
-
     const websocketURL =
         "ws://" + ip + ":81";
 
@@ -220,10 +260,8 @@ function connectESP32() {
     connectionBadge.textContent =
         "CONNECTING";
 
-
     statusDot.style.background =
         "#d8b15a";
-
 
     previewStatus.textContent =
         "CONNECTING";
@@ -272,7 +310,6 @@ function connectESP32() {
         connectionText.textContent =
             "DEVICE ONLINE";
 
-
         connectionSubtext.textContent =
             "ESP32-C3 connected";
 
@@ -297,7 +334,7 @@ function connectESP32() {
             "ESP32 CONNECTED";
 
 
-        // Enable / disable buttons
+        // Buttons
         connectBtn.disabled =
             false;
 
@@ -319,18 +356,31 @@ function connectESP32() {
 
     socket.onmessage = function(event) {
 
+        const data =
+            event.data;
+
+
         console.log(
             "ESP32:",
-            event.data
+            data
         );
 
 
-        // =====================================================
-        // ESP32 CONNECTED
-        // =====================================================
+        if (
+            typeof data !== "string"
+        ) {
+
+            return;
+        }
+
+
+
+        /* =================================================
+           ESP32 CONNECTED
+           ================================================= */
 
         if (
-            event.data ===
+            data ===
             "ESP32_CONNECTED"
         ) {
 
@@ -341,47 +391,204 @@ function connectESP32() {
         }
 
 
-        // =====================================================
-        // DISPLAY SYNC
-        // =====================================================
-        //
-        // ESP32 sends:
-        //
-        // SYNC:24:2:SCROLL:1
-        //
-        // offset  = OLED scroll position
-        // font    = OLED font size
-        // mode    = display mode
-        // playing = playback state
-        //
-        // =====================================================
+
+        /* =================================================
+           LINES BEGIN
+
+           Example:
+
+           LINES_BEGIN:3:2
+
+           3 = number of lines
+           2 = OLED font
+           ================================================= */
 
         if (
-            typeof event.data === "string" &&
-            event.data.startsWith("SYNC:")
+            data.startsWith(
+                "LINES_BEGIN:"
+            )
         ) {
 
             const parts =
-                event.data.split(":");
+                data.split(":");
 
 
-            if (parts.length >= 5) {
+            if (parts.length >= 2) {
+
+                mirrorExpectedLines =
+                    Number(parts[1]);
+
+
+                if (
+                    parts.length >= 3
+                ) {
+
+                    mirrorFont =
+                        Number(parts[2]);
+
+                }
+
+
+                mirrorLines = [];
+
+                receivingLines = true;
+
+
+                console.log(
+                    "OLED LINES BEGIN:",
+                    mirrorExpectedLines,
+                    "font:",
+                    mirrorFont
+                );
+
+            }
+
+
+            return;
+        }
+
+
+
+        /* =================================================
+           LINE
+
+           Example:
+
+           LINE:0:HELLO WORLD
+
+           We do NOT split the complete string because
+           the actual line may itself contain ":".
+           ================================================= */
+
+        if (
+            data.startsWith(
+                "LINE:"
+            )
+        ) {
+
+            if (!receivingLines) {
+
+                return;
+            }
+
+
+            const firstColon =
+                data.indexOf(":");
+
+            const secondColon =
+                data.indexOf(
+                    ":",
+                    firstColon + 1
+                );
+
+
+            if (
+                firstColon !== -1 &&
+                secondColon !== -1
+            ) {
+
+                const index =
+                    Number(
+                        data.substring(
+                            firstColon + 1,
+                            secondColon
+                        )
+                    );
+
+
+                const line =
+                    data.substring(
+                        secondColon + 1
+                    );
+
+
+                mirrorLines[index] =
+                    line;
+
+
+                console.log(
+                    "OLED LINE",
+                    index,
+                    ":",
+                    line
+                );
+
+            }
+
+
+            return;
+        }
+
+
+
+        /* =================================================
+           LINES END
+           ================================================= */
+
+        if (
+            data ===
+            "LINES_END"
+        ) {
+
+            receivingLines = false;
+
+
+            console.log(
+                "OLED LINES COMPLETE:",
+                mirrorLines
+            );
+
+
+            renderOLEDLines();
+
+
+            return;
+        }
+
+
+
+        /* =================================================
+           DISPLAY SYNC
+
+           ESP32 sends:
+
+           SYNC:24:2:SCROLL:1
+
+           offset  = 24
+           font    = 2
+           mode    = SCROLL
+           playing = true
+           ================================================= */
+
+        if (
+            data.startsWith(
+                "SYNC:"
+            )
+        ) {
+
+            const parts =
+                data.split(":");
+
+
+            if (
+                parts.length >= 5
+            ) {
 
                 const oledOffset =
                     Number(parts[1]);
 
+
                 const oledFont =
                     Number(parts[2]);
+
 
                 const oledMode =
                     parts[3];
 
+
                 const oledPlaying =
                     parts[4] === "1";
 
-
-                // Send exact OLED state
-                // to the browser preview
 
                 syncGlassPreview(
                     oledOffset,
@@ -389,10 +596,13 @@ function connectESP32() {
                     oledMode,
                     oledPlaying
                 );
+
             }
+
 
             return;
         }
+
     };
 
 
@@ -455,14 +665,17 @@ function disconnectESP32() {
             "Disconnecting..."
         );
 
+
         socket.close();
 
         socket = null;
+
     }
 
     else {
 
         setDisconnected();
+
     }
 
 }
@@ -540,54 +753,532 @@ if (disconnectBtn) {
 
 
 /* =====================================================
+   OLED FONT → BROWSER FONT
+   ===================================================== */
+
+function getBrowserFontSize(
+    oledFont
+) {
+
+    if (oledFont === 1) {
+
+        return 20;
+
+    }
+
+    if (oledFont === 2) {
+
+        return 28;
+
+    }
+
+    if (oledFont === 3) {
+
+        return 36;
+
+    }
+
+
+    return 20;
+
+}
+
+
+
+/* =====================================================
+   OLED LINE HEIGHT → BROWSER LINE HEIGHT
+   ===================================================== */
+
+function getBrowserLineHeight(
+    oledFont
+) {
+
+    /*
+     * OLED line height:
+
+       FONT 1 → 8 pixels
+       FONT 2 → 16 pixels
+       FONT 3 → 24 pixels
+
+     * Browser preview uses the same scale
+       as the browser font size.
+     */
+
+    if (oledFont === 1) {
+
+        return 20;
+
+    }
+
+    if (oledFont === 2) {
+
+        return 28;
+
+    }
+
+    if (oledFont === 3) {
+
+        return 36;
+
+    }
+
+
+    return 20;
+
+}
+
+
+
+/* =====================================================
+   OLED SCALE FACTOR
+   ===================================================== */
+
+function getPreviewScale(
+    oledFont
+) {
+
+    /*
+     * Browser font / OLED font height
+
+       FONT 1:
+       20 / 8 = 2.5
+
+       FONT 2:
+       28 / 16 = 1.75
+
+       FONT 3:
+       36 / 24 = 1.5
+    */
+
+    if (oledFont === 1) {
+
+        return 2.5;
+
+    }
+
+    if (oledFont === 2) {
+
+        return 1.75;
+
+    }
+
+    if (oledFont === 3) {
+
+        return 1.5;
+
+    }
+
+
+    return 2.5;
+
+}
+
+
+
+/* =====================================================
+   RENDER EXACT OLED LINES
+   ===================================================== */
+
+function renderOLEDLines() {
+
+    if (!previewText) {
+
+        return;
+    }
+
+
+    /*
+     * If ESP32 has not sent lines yet,
+     * don't destroy the normal preview.
+     */
+
+    if (
+        mirrorLines.length === 0
+    ) {
+
+        return;
+    }
+
+
+    // Remove undefined entries safely
+
+    const cleanLines =
+        mirrorLines.map(
+            line => {
+
+                if (
+                    typeof line ===
+                    "string"
+                ) {
+
+                    return line;
+
+                }
+
+                return "";
+
+            }
+        );
+
+
+    /*
+     * IMPORTANT:
+
+     * We use the EXACT line breaks
+     * received from ESP32.
+
+     * Browser will NOT create its own
+     * line wrapping.
+     */
+
+    previewText.textContent =
+        cleanLines.join("\n");
+
+
+    // Force exact line rendering
+    previewText.style.whiteSpace =
+        "pre";
+
+
+    previewText.style.wordWrap =
+        "normal";
+
+
+    previewText.style.overflowWrap =
+        "normal";
+
+
+    // Apply OLED font
+    previewText.style.fontSize =
+        getBrowserFontSize(
+            mirrorFont
+        ) + "px";
+
+
+    // Apply matching line height
+    previewText.style.lineHeight =
+        getBrowserLineHeight(
+            mirrorFont
+        ) + "px";
+
+
+    // Reset transform before new state
+    previewText.style.transform =
+        "translateY(0px)";
+
+
+    console.log(
+        "GLASS MIRROR RENDERED:",
+        cleanLines
+    );
+
+}
+
+
+
+/* =====================================================
+   OLED → GLASS REAL-TIME SYNC
+   ===================================================== */
+
+function syncGlassPreview(
+    oledOffset,
+    oledFont,
+    oledMode,
+    oledPlaying
+) {
+
+    /*
+     * Save the REAL OLED state.
+     */
+
+    mirrorOffset =
+        oledOffset;
+
+    mirrorFont =
+        oledFont;
+
+    mirrorMode =
+        oledMode;
+
+    mirrorPlaying =
+        oledPlaying;
+
+
+
+    /* =================================================
+       UPDATE FONT
+       ================================================= */
+
+    previewText.style.fontSize =
+        getBrowserFontSize(
+            oledFont
+        ) + "px";
+
+
+    previewText.style.lineHeight =
+        getBrowserLineHeight(
+            oledFont
+        ) + "px";
+
+
+
+    /* =================================================
+       UPDATE FONT LABEL
+       ================================================= */
+
+    if (
+        oledFont === 1
+    ) {
+
+        fontValue.textContent =
+            "Small";
+
+    }
+
+    else if (
+        oledFont === 2
+    ) {
+
+        fontValue.textContent =
+            "Medium";
+
+    }
+
+    else if (
+        oledFont === 3
+    ) {
+
+        fontValue.textContent =
+            "Large";
+
+    }
+
+
+
+    /* =================================================
+       STATIC MODE
+       ================================================= */
+
+    if (
+        oledMode ===
+        "STATIC"
+    ) {
+
+        previewText.style.transform =
+            "translateY(0px)";
+
+    }
+
+
+
+    /* =================================================
+       SCROLL MODE
+       ================================================= */
+
+    else if (
+        oledMode ===
+        "SCROLL"
+    ) {
+
+        /*
+         * Convert OLED pixels to browser
+         * preview pixels.
+
+         * The OLED is 128x64.
+         * Browser preview is visually larger.
+
+         * Therefore we multiply the OLED
+         * offset by the browser scale.
+         */
+
+        const scale =
+            getPreviewScale(
+                oledFont
+            );
+
+
+        const browserOffset =
+            oledOffset * scale;
+
+
+        /*
+         * THIS IS THE IMPORTANT PART.
+
+         * Website does NOT calculate its
+         * own scrolling.
+
+         * It simply follows the OLED.
+         */
+
+        previewText.style.transform =
+            "translateY(-" +
+            browserOffset +
+            "px)";
+
+    }
+
+
+
+    /* =================================================
+       PLAY / PAUSE
+       ================================================= */
+
+    if (
+        oledPlaying
+    ) {
+
+        previewStatus.textContent =
+            "PLAYING";
+
+    }
+
+    else {
+
+        if (
+            oledMode ===
+            "STATIC"
+        ) {
+
+            previewStatus.textContent =
+                "STATIC MODE";
+
+        }
+
+        else {
+
+            previewStatus.textContent =
+                "PAUSED";
+
+        }
+
+    }
+
+
+
+    console.log(
+        "GLASS SYNC →",
+        "offset:",
+        oledOffset,
+        "font:",
+        oledFont,
+        "mode:",
+        oledMode,
+        "playing:",
+        oledPlaying
+    );
+
+}
+
+
+
+/* =====================================================
    LIVE MESSAGE INPUT
    ===================================================== */
 
 let typingTimer = null;
 
-messageInput.addEventListener("input", () => {
 
-    const text = messageInput.value;
+messageInput.addEventListener(
+    "input",
+    () => {
 
-    // Update character count
-    characterCount.textContent = text.length;
+        const text =
+            messageInput.value;
 
-    // Update browser preview
-    if (text.trim() !== "") {
-        previewText.textContent = text;
-    } else {
-        previewText.textContent = "YOUR MESSAGE";
-    }
 
-    // -----------------------------------------------
-    // LIVE SEND TO ESP32
-    // -----------------------------------------------
+        // Update character count
+        characterCount.textContent =
+            text.length;
 
-    clearTimeout(typingTimer);
 
-    typingTimer = setTimeout(() => {
+        /*
+         * Before ESP32 responds,
+         * show the typed message.
+         */
 
-        // Don't send if ESP32 is not connected
         if (
-            !socket ||
-            socket.readyState !== WebSocket.OPEN
+            text.trim() !== ""
         ) {
-            console.log("ESP32 not connected - message not sent");
-            return;
+
+            previewText.textContent =
+                text;
+
         }
 
-        // Send empty text too, so OLED can be cleared
-        const command = "TEXT:" + text;
+        else {
 
-        socket.send(command);
+            previewText.textContent =
+                "YOUR MESSAGE";
 
-        console.log("LIVE SENT:", command);
+        }
 
-        previewStatus.textContent = "LIVE TO GLASS";
 
-    }, 80); // 80ms delay for smooth real-time typing
+        /*
+         * Once the ESP32 responds with
+         * LINES_BEGIN / LINE / LINES_END,
+         * renderOLEDLines() will replace
+         * this with the exact OLED layout.
+         */
 
-});
+
+        // -----------------------------------------------
+        // LIVE SEND TO ESP32
+        // -----------------------------------------------
+
+        clearTimeout(
+            typingTimer
+        );
+
+
+        typingTimer =
+            setTimeout(
+                () => {
+
+                    // Don't send if ESP32 is not connected
+                    if (
+                        !socket ||
+                        socket.readyState !==
+                        WebSocket.OPEN
+                    ) {
+
+                        console.log(
+                            "ESP32 not connected - message not sent"
+                        );
+
+                        return;
+                    }
+
+
+                    /*
+                     * Send TEXT command.
+                     */
+
+                    const command =
+                        "TEXT:" + text;
+
+
+                    socket.send(
+                        command
+                    );
+
+
+                    console.log(
+                        "LIVE SENT:",
+                        command
+                    );
+
+
+                    previewStatus.textContent =
+                        "LIVE TO GLASS";
+
+
+                },
+                80
+            );
+
+    }
+);
+
 
 
 /* =====================================================
@@ -604,7 +1295,9 @@ sendBtn.addEventListener(
 
         // Don't send empty messages
 
-        if (message === "") {
+        if (
+            message === ""
+        ) {
 
             showStatus(
                 "ENTER A MESSAGE",
@@ -621,13 +1314,12 @@ sendBtn.addEventListener(
             message;
 
 
-        // =================================================
         // CHECK WEBSOCKET CONNECTION
-        // =================================================
 
         if (
             !socket ||
-            socket.readyState !== WebSocket.OPEN
+            socket.readyState !==
+            WebSocket.OPEN
         ) {
 
             showStatus(
@@ -639,23 +1331,15 @@ sendBtn.addEventListener(
         }
 
 
-        // =================================================
         // SEND TEXT TO ESP32
-        // =================================================
-        //
-        // ESP32 expects:
-        //
-        // TEXT:Hello World
-        //
-        // The ESP32 code removes "TEXT:"
-        // and displays "Hello World".
-        // =================================================
 
         const command =
             "TEXT:" + message;
 
 
-        socket.send(command);
+        socket.send(
+            command
+        );
 
 
         console.log(
@@ -689,14 +1373,30 @@ clearBtn.addEventListener(
         messageInput.value =
             "";
 
+
         characterCount.textContent =
             "0";
+
 
         previewText.textContent =
             "YOUR MESSAGE";
 
+
+        previewText.style.transform =
+            "translateY(0px)";
+
+
         previewStatus.textContent =
             "READY";
+
+
+        /*
+         * Reset mirror state.
+         */
+
+        mirrorLines = [];
+
+        mirrorOffset = 0;
 
     }
 );
@@ -742,6 +1442,10 @@ quickButtons.forEach(
                     message;
 
 
+                previewText.style.transform =
+                    "translateY(0px)";
+
+
                 previewStatus.textContent =
                     "MESSAGE READY";
 
@@ -762,7 +1466,9 @@ speedSlider.addEventListener(
     () => {
 
         const speed =
-            Number(speedSlider.value);
+            Number(
+                speedSlider.value
+            );
 
 
         // Update website display
@@ -771,16 +1477,13 @@ speedSlider.addEventListener(
             speed + "%";
 
 
-        // =================================================
-        // SEND SPEED TO ESP32
-        // =================================================
-        //
-        // Website speed = 1 to 100
-        //
-        // ESP32 speed = 1 to 10
-        //
-        // Convert 1-100 → 1-10
-        // =================================================
+        /*
+         * Website speed = 1 to 100
+         *
+         * ESP32 speed = 1 to 10
+         *
+         * Convert 1-100 → 1-10
+         */
 
         const espSpeed =
             Math.max(
@@ -801,10 +1504,13 @@ speedSlider.addEventListener(
         ) {
 
             const command =
-                "SPEED:" + espSpeed;
+                "SPEED:" +
+                espSpeed;
 
 
-            socket.send(command);
+            socket.send(
+                command
+            );
 
 
             console.log(
@@ -863,38 +1569,85 @@ sizeButtons.forEach(
                 let fontNumber;
 
 
-                // =========================================
-                // SMALL
-                // =========================================
 
-                if (size === "small") {
+                /* =========================================
+                   SMALL
+                   ========================================= */
 
-                    previewText.style.fontSize = "20px";
-                    fontValue.textContent = "Small";
+                if (
+                    size ===
+                    "small"
+                ) {
 
-                    fontNumber = 1;
-                }
+                    previewText.style.fontSize =
+                        "20px";
 
-                else if (size === "medium") {
-                
-                    previewText.style.fontSize = "28px";
-                    fontValue.textContent = "Medium";
-                
-                    fontNumber = 2;
-                }
+                    previewText.style.lineHeight =
+                        "20px";
 
-                else if (size === "large") {
-                
-                    previewText.style.fontSize = "36px";
-                    fontValue.textContent = "Large";
-                
-                    fontNumber = 3;
+                    fontValue.textContent =
+                        "Small";
+
+                    fontNumber =
+                        1;
+
                 }
 
 
-                // =========================================
-                // SEND FONT SIZE TO ESP32
-                // =========================================
+
+                /* =========================================
+                   MEDIUM
+                   ========================================= */
+
+                else if (
+                    size ===
+                    "medium"
+                ) {
+
+                    previewText.style.fontSize =
+                        "28px";
+
+                    previewText.style.lineHeight =
+                        "28px";
+
+                    fontValue.textContent =
+                        "Medium";
+
+                    fontNumber =
+                        2;
+
+                }
+
+
+
+                /* =========================================
+                   LARGE
+                   ========================================= */
+
+                else if (
+                    size ===
+                    "large"
+                ) {
+
+                    previewText.style.fontSize =
+                        "36px";
+
+                    previewText.style.lineHeight =
+                        "36px";
+
+                    fontValue.textContent =
+                        "Large";
+
+                    fontNumber =
+                        3;
+
+                }
+
+
+
+                /* =========================================
+                   SEND FONT SIZE TO ESP32
+                   ========================================= */
 
                 if (
                     socket &&
@@ -903,10 +1656,13 @@ sizeButtons.forEach(
                 ) {
 
                     const command =
-                        "FONT:" + fontNumber;
+                        "FONT:" +
+                        fontNumber;
 
 
-                    socket.send(command);
+                    socket.send(
+                        command
+                    );
 
 
                     console.log(
@@ -965,12 +1721,14 @@ modeButtons.forEach(
                     button.dataset.mode;
 
 
-                // =========================================
-                // STATIC MODE
-                // =========================================
+
+                /* =========================================
+                   STATIC MODE
+                   ========================================= */
 
                 if (
-                    mode === "static"
+                    mode ===
+                    "static"
                 ) {
 
                     previewStatus.textContent =
@@ -992,9 +1750,10 @@ modeButtons.forEach(
                 }
 
 
-                // =========================================
-                // SCROLL MODE
-                // =========================================
+
+                /* =========================================
+                   SCROLL MODE
+                   ========================================= */
 
                 else {
 
@@ -1056,98 +1815,6 @@ startBtn.addEventListener(
         }
 
         else {
-
-            /* =====================================================
-               OLED → GLASS PREVIEW SYNC
-               ===================================================== */
-                    
-            function syncGlassPreview(
-                oledOffset,
-                oledFont,
-                oledMode,
-                oledPlaying
-            ) {
-            
-                console.log(
-                    "OLED SYNC:",
-                    oledOffset,
-                    oledFont,
-                    oledMode,
-                    oledPlaying
-                );
-            
-            
-                // =========================================
-                // UPDATE FONT SIZE
-                // =========================================
-            
-                if (oledFont === 1) {
-                
-                    previewText.style.fontSize = "20px";
-                
-                }
-            
-                else if (oledFont === 2) {
-                
-                    previewText.style.fontSize = "28px";
-                
-                }
-            
-                else if (oledFont === 3) {
-                
-                    previewText.style.fontSize = "36px";
-                
-                }
-            
-            
-                // =========================================
-                // UPDATE PLAY / PAUSE STATUS
-                // =========================================
-            
-                if (oledPlaying) {
-                
-                    previewStatus.textContent =
-                        "PLAYING";
-                
-                }
-            
-                else {
-                
-                    previewStatus.textContent =
-                        "PAUSED";
-                
-                }
-            
-            
-                // =========================================
-                // SCROLL MODE
-                // =========================================
-            
-                if (oledMode === "SCROLL") {
-                
-                    /*
-                     * Move browser preview according
-                     * to the REAL OLED scroll position.
-                     */
-                
-                    previewText.style.transform =
-                        "translateY(-" + oledOffset + "px)";
-                
-                }
-            
-            
-                // =========================================
-                // STATIC MODE
-                // =========================================
-            
-                else {
-                
-                    previewText.style.transform =
-                        "translateY(0px)";
-                
-                }
-            
-            }
 
             showStatus(
                 "ESP32 NOT CONNECTED",
@@ -1218,6 +1885,17 @@ resetBtn.addEventListener(
             "READY";
 
 
+        /*
+         * Immediately return website preview
+         * to the top.
+         */
+
+        mirrorOffset = 0;
+
+        previewText.style.transform =
+            "translateY(0px)";
+
+
         // Send RESET to ESP32
 
         if (
@@ -1264,7 +1942,9 @@ function showStatus(
         message;
 
 
-    if (success) {
+    if (
+        success
+    ) {
 
         previewStatus.style.color =
             "#b7c0ce";
@@ -1295,7 +1975,8 @@ messageInput.addEventListener(
 
         if (
             event.ctrlKey &&
-            event.key === "Enter"
+            event.key ===
+            "Enter"
         ) {
 
             event.preventDefault();
@@ -1314,15 +1995,34 @@ messageInput.addEventListener(
    ===================================================== */
 
 // Show correct WebSocket address
+
 updateWebSocketAddress();
 
 
 // Start disconnected
+
 setDisconnected();
 
 
+// Initial mirror state
+
+mirrorLines = [];
+
+mirrorOffset = 0;
+
+mirrorFont = 1;
+
+mirrorMode = "STATIC";
+
+mirrorPlaying = false;
+
+
 console.log(
-    "Smart Glass Dashboard loaded."
+    "OPTISYNK Smart Glass Dashboard loaded."
+);
+
+console.log(
+    "OLED mirror synchronization enabled."
 );
 
 console.log(
