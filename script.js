@@ -325,9 +325,9 @@ function connectESP32() {
         );
 
 
-        // ESP32 sends this immediately after connection
-        //
-        // ESP32_CONNECTED
+        // =====================================================
+        // ESP32 CONNECTED
+        // =====================================================
 
         if (
             event.data ===
@@ -341,9 +341,58 @@ function connectESP32() {
         }
 
 
-        // If ESP32 sends anything else,
-        // display it in the console.
+        // =====================================================
+        // DISPLAY SYNC
+        // =====================================================
+        //
+        // ESP32 sends:
+        //
+        // SYNC:24:2:SCROLL:1
+        //
+        // offset  = OLED scroll position
+        // font    = OLED font size
+        // mode    = display mode
+        // playing = playback state
+        //
+        // =====================================================
 
+        if (
+            typeof event.data === "string" &&
+            event.data.startsWith("SYNC:")
+        ) {
+
+            const parts =
+                event.data.split(":");
+
+
+            if (parts.length >= 5) {
+
+                const oledOffset =
+                    Number(parts[1]);
+
+                const oledFont =
+                    Number(parts[2]);
+
+                const oledMode =
+                    parts[3];
+
+                const oledPlaying =
+                    parts[4] === "1";
+
+
+                // Send exact OLED state
+                // to the browser preview
+
+                syncGlassPreview(
+                    oledOffset,
+                    oledFont,
+                    oledMode,
+                    oledPlaying
+                );
+            }
+
+            return;
+        }
     };
 
 
@@ -822,10 +871,10 @@ sizeButtons.forEach(
 
                     previewText.style.fontSize = "20px";
                     fontValue.textContent = "Small";
-                                
+
                     fontNumber = 1;
                 }
-                
+
                 else if (size === "medium") {
                 
                     previewText.style.fontSize = "28px";
@@ -833,7 +882,7 @@ sizeButtons.forEach(
                 
                     fontNumber = 2;
                 }
-                
+
                 else if (size === "large") {
                 
                     previewText.style.fontSize = "36px";
@@ -1007,6 +1056,98 @@ startBtn.addEventListener(
         }
 
         else {
+
+            /* =====================================================
+               OLED → GLASS PREVIEW SYNC
+               ===================================================== */
+                    
+            function syncGlassPreview(
+                oledOffset,
+                oledFont,
+                oledMode,
+                oledPlaying
+            ) {
+            
+                console.log(
+                    "OLED SYNC:",
+                    oledOffset,
+                    oledFont,
+                    oledMode,
+                    oledPlaying
+                );
+            
+            
+                // =========================================
+                // UPDATE FONT SIZE
+                // =========================================
+            
+                if (oledFont === 1) {
+                
+                    previewText.style.fontSize = "20px";
+                
+                }
+            
+                else if (oledFont === 2) {
+                
+                    previewText.style.fontSize = "28px";
+                
+                }
+            
+                else if (oledFont === 3) {
+                
+                    previewText.style.fontSize = "36px";
+                
+                }
+            
+            
+                // =========================================
+                // UPDATE PLAY / PAUSE STATUS
+                // =========================================
+            
+                if (oledPlaying) {
+                
+                    previewStatus.textContent =
+                        "PLAYING";
+                
+                }
+            
+                else {
+                
+                    previewStatus.textContent =
+                        "PAUSED";
+                
+                }
+            
+            
+                // =========================================
+                // SCROLL MODE
+                // =========================================
+            
+                if (oledMode === "SCROLL") {
+                
+                    /*
+                     * Move browser preview according
+                     * to the REAL OLED scroll position.
+                     */
+                
+                    previewText.style.transform =
+                        "translateY(-" + oledOffset + "px)";
+                
+                }
+            
+            
+                // =========================================
+                // STATIC MODE
+                // =========================================
+            
+                else {
+                
+                    previewText.style.transform =
+                        "translateY(0px)";
+                
+                }
+            
+            }
 
             showStatus(
                 "ESP32 NOT CONNECTED",
