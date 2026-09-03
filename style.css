@@ -1033,3 +1033,41 @@ footer {
     }
 
 }
+
+/* =====================================================
+   REAL-TIME GLASS / OLED MIRROR
+   ===================================================== */
+
+#previewText {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Text moving inside glass */
+
+.glass-mirror-content {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 92%;
+
+    transform:
+        translate(-50%, -50%);
+
+    text-align: center;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    will-change: transform;
+
+    font-weight: 500;
+
+    transition:
+        transform 0.08s linear;
+}
