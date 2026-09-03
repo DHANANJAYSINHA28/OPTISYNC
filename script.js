@@ -819,31 +819,26 @@ sizeButtons.forEach(
                 // =========================================
 
                 if (size === "small") {
+
                     previewText.style.fontSize = "20px";
                     fontValue.textContent = "Small";
+                                
                     fontNumber = 1;
                 }
-
-
-                // =========================================
-                // MEDIUM
-                // =========================================
-
+                
                 else if (size === "medium") {
+                
                     previewText.style.fontSize = "28px";
                     fontValue.textContent = "Medium";
+                
                     fontNumber = 2;
                 }
-
-
-
-                // =========================================
-                // LARGE
-                // =========================================
-
+                
                 else if (size === "large") {
+                
                     previewText.style.fontSize = "36px";
                     fontValue.textContent = "Large";
+                
                     fontNumber = 3;
                 }
 
