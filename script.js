@@ -818,18 +818,10 @@ sizeButtons.forEach(
                 // SMALL
                 // =========================================
 
-                if (
-                    size === "small"
-                ) {
-
-                    previewText.style.fontSize =
-                        "20px";
-
-                    fontValue.textContent =
-                        "Small";
-
+                if (size === "small") {
+                    previewText.style.fontSize = "20px";
+                    fontValue.textContent = "Small";
                     fontNumber = 1;
-
                 }
 
 
@@ -837,37 +829,22 @@ sizeButtons.forEach(
                 // MEDIUM
                 // =========================================
 
-                else if (
-                    size === "medium"
-                ) {
-
-                    previewText.style.fontSize =
-                        "28px";
-
-                    fontValue.textContent =
-                        "Medium";
-
-                    fontNumber = 1;
-
+                else if (size === "medium") {
+                    previewText.style.fontSize = "28px";
+                    fontValue.textContent = "Medium";
+                    fontNumber = 2;
                 }
+
 
 
                 // =========================================
                 // LARGE
                 // =========================================
 
-                else if (
-                    size === "large"
-                ) {
-
-                    previewText.style.fontSize =
-                        "38px";
-
-                    fontValue.textContent =
-                        "Large";
-
-                    fontNumber = 2;
-
+                else if (size === "large") {
+                    previewText.style.fontSize = "36px";
+                    fontValue.textContent = "Large";
+                    fontNumber = 3;
                 }
 
 
