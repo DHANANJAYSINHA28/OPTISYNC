@@ -65,6 +65,9 @@ const previewStatus =
 const statusDot =
     document.getElementById("statusDot");
 
+const liveBadge =
+    document.getElementById("liveBadge");
+
 const connectionText =
     document.getElementById("connectionText");
 
@@ -220,7 +223,68 @@ function sendTextToESP32() {
     return true;
 }
 
+/* =====================================================
+   CONNECTION VISUAL STATE
+   ===================================================== */
 
+function setOnlineVisuals() {
+
+    /* Top-right device indicator */
+
+    statusDot.classList.add("online");
+
+    const connectionElement =
+        document.querySelector(".connection");
+
+    if (connectionElement) {
+        connectionElement.classList.add("online");
+    }
+
+
+    /* LIVE badge */
+
+    if (liveBadge) {
+        liveBadge.classList.add("active");
+    }
+
+
+    /* Connection badge */
+
+    connectionBadge.classList.add("connected");
+
+}
+
+
+/* =====================================================
+   OFFLINE VISUAL STATE
+   ===================================================== */
+
+function setOfflineVisuals() {
+
+    /* Top-right device indicator */
+
+    statusDot.classList.remove("online");
+
+    const connectionElement =
+        document.querySelector(".connection");
+
+    if (connectionElement) {
+        connectionElement.classList.remove("online");
+    }
+
+
+    /* LIVE badge */
+
+    if (liveBadge) {
+        liveBadge.classList.remove("active");
+    }
+
+
+    /* Connection badge */
+
+    connectionBadge.classList.remove("connected");
+
+}
 
 /* =====================================================
    CONNECT ESP32
@@ -335,70 +399,65 @@ function connectESP32() {
         console.log(
             "ESP32 WebSocket CONNECTED"
         );
-
-
+    
         isConnected = true;
-
-
+    
+    
         connectionText.textContent =
             "DEVICE ONLINE";
-
+    
         connectionSubtext.textContent =
             "ESP32-C3 connected";
-
+    
         deviceStatus.textContent =
             "Connected";
-
+    
         connectionBadge.textContent =
             "CONNECTED";
-
-        statusDot.style.background =
-            "#65d69a";
-
+    
+    
+        /* GREEN GLOW */
+    
+        setOnlineVisuals();
+    
+    
         previewStatus.textContent =
             "DEVICE READY";
-
-
+    
+    
         connectBtn.disabled =
             false;
-
+    
         disconnectBtn.disabled =
             false;
-
-
-        /*
-         * IMPORTANT FIX
-         *
-         * If the user typed/pasted text
-         * BEFORE connecting, send it now.
-         */
-
+    
+    
         setTimeout(
             () => {
-
+            
                 if (
                     socket &&
                     socket.readyState ===
                     WebSocket.OPEN
                 ) {
-
+                
                     if (
                         messageInput.value.trim() !== ""
                     ) {
-
+                    
                         sendTextToESP32();
-
+                    
                         previewStatus.textContent =
                             "TEXT SENT TO ESP32";
-
+                    
                     }
-
+                
                 }
-
+            
             },
             100
         );
-
+    
     };
 
 
@@ -545,8 +604,11 @@ function setDisconnected() {
     connectionBadge.textContent =
         "DISCONNECTED";
 
-    statusDot.style.background =
-        "#9aa3b3";
+
+    /* REMOVE GREEN GLOW */
+
+    setOfflineVisuals();
+
 
     previewStatus.textContent =
         "DEVICE OFFLINE";
