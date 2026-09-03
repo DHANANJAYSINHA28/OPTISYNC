@@ -155,22 +155,95 @@ body {
 
 /* STATUS DOT */
 
-.status-dot {
+/* =====================================================
+   CONNECTION STATUS DOT
+   ===================================================== */
 
-    width: 10px;
-    height: 10px;
+.status-dot {
+    width: 9px;
+    height: 9px;
+
+    flex-shrink: 0;
 
     border-radius: 50%;
 
-    background: #596170;
+    background: #737b89;
 
-    box-shadow:
-        none;
+    box-shadow: none;
 
     transition:
         background 0.3s ease,
         box-shadow 0.3s ease,
         transform 0.3s ease;
+}
+
+
+/* CONNECTING */
+
+.status-dot.connecting {
+    background: #d8b15a;
+
+    box-shadow:
+        0 0 7px rgba(216,177,90,0.55);
+
+    animation: statusPulse 1.2s infinite;
+}
+
+
+/* ONLINE */
+
+.status-dot.online {
+    background: #63e6a3;
+
+    box-shadow:
+        0 0 5px #63e6a3,
+        0 0 12px rgba(99,230,163,0.75),
+        0 0 22px rgba(99,230,163,0.35);
+
+    animation: statusPulseGreen 1.8s infinite;
+}
+
+
+/* OFFLINE */
+
+.status-dot.offline {
+    background: #737b89;
+
+    box-shadow: none;
+
+    animation: none;
+}
+
+
+/* =====================================================
+   STATUS ANIMATIONS
+   ===================================================== */
+
+@keyframes statusPulseGreen {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: scale(0.92);
+    }
+}
+
+
+@keyframes statusPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.45;
+    }
 }
 
 
@@ -602,34 +675,42 @@ button:active {
    LIVE BADGE
 ===================================================== */
 
+/* =====================================================
+   LIVE STATUS BADGE
+   ===================================================== */
+
 .live-badge {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
+    font-size: 9px;
+    letter-spacing: 1px;
     padding: 7px 11px;
-
     border-radius: 20px;
 
-    font-size: 9px;
+    color: #7d8798;
 
-    letter-spacing: 1px;
+    background: rgba(255,255,255,0.025);
 
-    color: #808a9b;
-
-    background:
-        rgba(255,255,255,0.025);
-
-    border:
-        1px solid rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.10);
 
     transition:
         color 0.3s ease,
+        background 0.3s ease,
         border-color 0.3s ease,
         box-shadow 0.3s ease;
+}
+
+
+/* DEVICE CONNECTED */
+
+.live-badge.online {
+    color: #63e6a3;
+
+    background: rgba(55, 220, 130, 0.08);
+
+    border-color: rgba(55, 220, 130, 0.35);
+
+    box-shadow:
+        0 0 8px rgba(55, 220, 130, 0.25),
+        inset 0 0 8px rgba(55, 220, 130, 0.04);
 }
 
 
@@ -662,6 +743,56 @@ button:active {
         0 0 16px rgba(94,230,161,0.12);
 }
 
+/* =====================================================
+   CONNECTION BADGE
+   ===================================================== */
+
+.connection-badge {
+    font-size: 9px;
+    letter-spacing: 1px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    color: #7d8798;
+
+    background: rgba(255,255,255,0.025);
+
+    border: 1px solid rgba(255,255,255,0.10);
+
+    transition:
+        color 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+/* CONNECTED */
+
+.connection-badge.connected {
+    color: #63e6a3;
+
+    background: rgba(55,220,130,0.08);
+
+    border-color: rgba(55,220,130,0.35);
+
+    box-shadow:
+        0 0 10px rgba(55,220,130,0.20),
+        inset 0 0 8px rgba(55,220,130,0.04);
+}
+
+
+/* CONNECTING */
+
+.connection-badge.connecting {
+    color: #d8b15a;
+
+    background: rgba(216,177,90,0.07);
+
+    border-color: rgba(216,177,90,0.30);
+}
 
 .live-badge.active .live-dot {
 
