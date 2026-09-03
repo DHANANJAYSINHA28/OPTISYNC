@@ -231,10 +231,24 @@ function connectESP32() {
 
     connectionBadge.textContent =
         "CONNECTING";
-
+    
+    connectionBadge.className =
+        "connection-badge connecting";
+    
     statusDot.className =
         "status-dot connecting";
-
+    
+    
+    /* LIVE stays grey while connecting */
+    
+    const liveBadge =
+        document.querySelector(".live-badge");
+    
+    if (liveBadge) {
+    
+        liveBadge.classList.remove("online");
+    
+    }
     previewStatus.textContent =
         "CONNECTING";
 
@@ -286,8 +300,23 @@ function connectESP32() {
         connectionBadge.textContent =
             "CONNECTED";
 
+        connectionBadge.className =
+            "connection-badge connected";
+
         statusDot.className =
             "status-dot online";
+
+
+        /* Make LIVE badge green */
+
+        const liveBadge =
+            document.querySelector(".live-badge");
+
+        if (liveBadge) {
+        
+            liveBadge.classList.add("online");
+        
+        }
 
         previewStatus.textContent =
             "DEVICE READY";
@@ -455,9 +484,24 @@ function setDisconnected() {
 
     connectionBadge.textContent =
         "DISCONNECTED";
-
+    
+    connectionBadge.className =
+        "connection-badge";
+    
     statusDot.className =
         "status-dot offline";
+    
+    
+    /* Make LIVE badge grey */
+    
+    const liveBadge =
+        document.querySelector(".live-badge");
+    
+    if (liveBadge) {
+    
+        liveBadge.classList.remove("online");
+    
+    }
 
     previewStatus.textContent =
         "DEVICE OFFLINE";
